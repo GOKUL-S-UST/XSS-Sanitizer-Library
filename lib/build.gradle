@@ -37,7 +37,7 @@ publishing {
             pom {
                 name = 'XSS Sanitizer Library'
                 description = 'A Spring Boot library for XSS sanitization'
-                url = 'https://github.com/chandralokesh-ust/xss-sanitizer-lib'
+                url = 'https://github.com/GOKUL-S-UST/XSS-Sanitizer-Library'
 
                 licenses {
                     license {
@@ -55,9 +55,9 @@ publishing {
                 }
 
                 scm {
-                    connection = 'scm:git:git://github.com/chandralokesh-ust/xss-sanitizer-lib.git'
-                    developerConnection = 'scm:git:ssh://github.com/chandralokesh-ust/xss-sanitizer-lib.git'
-                    url = 'https://github.com/chandralokesh-ust/xss-sanitizer-lib'
+                    connection = 'scm:git:git://github.com/GOKUL-S-UST/XSS-Sanitizer-Library.git'
+                    developerConnection = 'scm:git:ssh://github.com/GOKUL-S-UST/XSS-Sanitizer-Library.git'
+                    url = 'https://github.com/GOKUL-S-UST/XSS-Sanitizer-Library'
                 }
             }
         }
