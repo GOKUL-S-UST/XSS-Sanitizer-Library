@@ -1,25 +1,48 @@
 plugins {
     id 'java-library'
-    id 'maven-publish'
-    id 'signing'
-    // ADD THIS PLUGIN: It handles the ZIP bundling for the new portal
+    // This plugin is the magic for Maven Central Portal
     id 'com.vanniktech.maven.publish' version '0.28.0'
 }
 
 group = 'io.github.gokul-s-ust'
-version = '1.0.7' // Bump version again
+version = '1.0.8'
 
 java {
-    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
     withSourcesJar()
     withJavadocJar()
 }
 
-// Remove the old 'publishing' and 'signing' blocks and replace with this simple config:
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // We use 'implementation' or 'api' here.
+    // I added jackson explicitly to ensure the compiler sees it.
+    api 'org.springframework.boot:spring-boot-starter-web:2.7.18'
+    api 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.google.guava:guava:32.1.3-jre'
+    implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20260101.1'
+
+    // Lombok setup
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+}
+
+// Ignore javadoc errors so they don't block the release
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.encoding = 'UTF-8'
+}
+
 mavenPublishing {
-    // This helper method sets up the POM and signing automatically
+    // This defines where the files go (Central Portal)
     publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
 
+    // This tells the plugin to sign the artifacts using your GPG key
     signAllPublications()
 
     coordinates("io.github.gokul-s-ust", "lib", version)
