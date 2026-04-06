@@ -1,17 +1,18 @@
 plugins {
     id 'java-library'
+    // This plugin handles the ZIP bundling required by the new Central Portal
     id 'com.vanniktech.maven.publish' version '0.28.0'
 }
 
 group = 'io.github.gokul-s-ust'
-version = '1.0.9' // Ensure this matches your tag
+version = '1.0.10'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
-    // REMOVED: withSourcesJar() and withJavadocJar()
-    // The vanniktech plugin handles these for you!
+    // Note: withSourcesJar() and withJavadocJar() are removed because
+    // the vanniktech plugin generates these automatically for the publication.
 }
 
 repositories {
@@ -27,12 +28,23 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
 }
 
+// Ensure Javadoc errors don't stop the release process
 tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')
     options.encoding = 'UTF-8'
 }
 
 mavenPublishing {
+    // --- GPG FIX RE-APPLIED ---
+    // We manually pull the key from the environment and fix the formatting
+    // before the plugin tries to use it.
+    def rawKey = System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey")
+    if (rawKey != null) {
+        // Reconstructs the actual key by replacing literal '\n' with real line breaks
+        project.ext["signingInMemoryKey"] = rawKey.replace("\\n", "\n")
+    }
+    // --------------------------
+
     publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
 
