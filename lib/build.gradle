@@ -4,8 +4,9 @@ plugins {
     id 'signing'
 }
 
+// 1. Ensure this matches your verified namespace EXACTLY (all lowercase)
 group = 'io.github.gokul-s-ust'
-version = '1.0.5'
+version = '1.0.6' // Bumped version to ensure a fresh deployment attempt
 
 java {
     toolchain {
@@ -26,6 +27,12 @@ dependencies {
     implementation 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20260101.1'
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
+}
+
+// 2. Suppress Javadoc warnings to prevent potential validation failures at Sonatype
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.encoding = 'UTF-8'
 }
 
 publishing {
@@ -65,8 +72,12 @@ publishing {
     repositories {
         maven {
             name = "MavenCentral"
-            url = uri("https://central.sonatype.com/api/v1/publisher/deployments/maven2/")
+            // 3. UPDATED URL: The Central Portal often requires this specific endpoint.
+            // Note: Removing the trailing slash sometimes resolves 404s in some Gradle versions.
+            url = uri("https://central.sonatype.com/api/v1/publisher/deployments/maven2")
+
             credentials {
+                // Ensure these are the "User Token" values from central.sonatype.com
                 username = System.getenv("MAVEN_USERNAME")
                 password = System.getenv("MAVEN_PASSWORD")
             }
