@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'io.github.gokul-s-ust'
-version = '1.0.3'
+version = '1.0.4'
 
 java {
     toolchain {
@@ -33,7 +33,6 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
 
-            // NEW - All these POM fields are mandatory for Maven Central
             pom {
                 name = 'XSS Sanitizer Library'
                 description = 'A Spring Boot library for XSS sanitization'
@@ -66,20 +65,27 @@ publishing {
     repositories {
         maven {
             name = "MavenCentral"
-            // NEW - Central Portal publishing URL
             url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
-                username = System.getenv("MAVEN_USERNAME")   // Sonatype token username
-                password = System.getenv("MAVEN_PASSWORD")   // Sonatype token password
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
             }
         }
     }
 }
 
-// NEW - GPG Signing config (Maven Central rejects unsigned artifacts)
 signing {
     def signingKey = System.getenv("GPG_SIGNING_KEY")
     def signingPassword = System.getenv("GPG_SIGNING_PASSWORD")
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign publishing.publications.mavenJava
+
+    if (signingKey != null && signingPassword != null) {
+        useInMemoryPgpKeys(
+                signingKey.replace("\\n", "\n"),
+                signingPassword
+        )
+        sign publishing.publications.mavenJava
+        println("✅ GPG signing configured")
+    } else {
+        println("⚠️ GPG signing skipped: key or password not found")
+    }
 }
