@@ -1,18 +1,18 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'signing'                    // NEW - Maven Central mandates GPG signing
+    id 'signing'
 }
 
-group = 'io.github.chandralokesh-ust'   // CHANGE - must match your Sonatype namespace
+group = 'io.github.gokul-s-ust'
 version = '1.0.0'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
-    withSourcesJar()               // NEW - Maven Central mandatory
-    withJavadocJar()               // NEW - Maven Central mandatory
+    withSourcesJar()
+    withJavadocJar()
 }
 
 repositories {
